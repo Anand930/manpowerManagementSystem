@@ -77,4 +77,4 @@ const employeeSchema = new Schema({
 },{timestamps:true})
 
 
-export const employee = model('Employee', employeeSchema)
+export const Employee = model('Employee', employeeSchema)
