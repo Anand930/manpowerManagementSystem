@@ -6,7 +6,7 @@ const companySchema = new Schema({
         required:true
     },
 
-    city:{
+    location:{
         type:String,
         required:true
     },
@@ -36,7 +36,7 @@ const companySchema = new Schema({
     },
     isActive:{
         type:Boolean,
-        default:true
+        default:true    
     }
 },{timestamps:true})
 

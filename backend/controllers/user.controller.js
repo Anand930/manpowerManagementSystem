@@ -62,26 +62,23 @@ const registerUser = async (req, res) => {
       password,
       phone,
       role,
-      profileImage: profileImage?.url,
-    });
-    
-  
-    
+      profileImage: profileImage?.url
+    });    
 
     const createdUser = await User.findById(user._id).select(
       "-password -refreshToken",
-    );
-
-    
+    );    
 
     return res
       .status(201)
       .json({ message: "user is created successfully ", createdUser });
+
   } catch (error) {
     console.log("Something went wrong while creating user ", error);
+
     return res
       .status(500)
-      .json({ message: "something went wrong while creating the user" });
+      .json({ message: error.meassag });
   }
 };
 
@@ -117,7 +114,6 @@ const loginUser = async (req, res) => {
       return res.status(500).json({message:"issue in generating tokens"})
     }
 
-    
 
     const loggedInUser = await User.findById(user._id).select(
       "-password -refreshToken",
@@ -144,6 +140,40 @@ const loginUser = async (req, res) => {
     return res.status(500).json({message:error.message})
   }
 };
+
+const refreshAccessToken = async(req, res) =>{
+  const incominToken = req.cookies.refreshToken||req.body.refreshAccessToken
+  if(!incominToken){
+    return res.status(401).json({message:"token not found"})
+  }
+
+  try {
+    const decode = jwt.verify(incominToken,process.env.REFRESH_TOKEN_SECRET)
+
+    const user = await User.findById(decode._id)
+    if(!user){
+      return res.status(401).json({meassage:"wrong token"})
+    }
+    if(incominToken!==user.refreshToken){
+      return res.status(401).json({message:"refreshToken is expired or wrong"})
+    }
+    const options ={
+      httpOnly:true,
+      secure:true
+    }
+
+    const {accessToken, refreshToken} = await generateAcessAndRefreshToken(user._id)
+    return res.status(201)
+    .cookie('accessToken',accessToken)
+    .cookie('refreshToken',refreshToken)
+    .json({
+      message:"accessToken refresh", accessToken, refreshToken
+    })
+  } catch (error) {
+    console.log(error.message);
+    
+  }
+}
 
 
 export {registerUser, loginUser}
