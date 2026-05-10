@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from "cookie-parser"
 import userRoute from './routers/user.route.js'
 import companyRoute from './routers/company.route.js'
+import attendenceRoute from "./routers/attendence.route.js"
 
 export const app = express()
 
@@ -25,3 +26,4 @@ app.use(cookieParser())
 
 app.use('/api/user', userRoute)
 app.use('/api/company',companyRoute)
+app.use('/api/attendence',attendenceRoute)
