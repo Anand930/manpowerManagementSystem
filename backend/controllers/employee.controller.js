@@ -45,6 +45,7 @@ const addEmployee = async (req, res) => {
     if (!createdUser) {
       return res.status(500).json({ message: "Employee not created" });
     }
+    await createdEmployee.populate(['company','department'])
     return res.status(201).json({
       message: "new Employee is created successfully",
       newEmployee: createdEmployee,

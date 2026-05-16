@@ -6,6 +6,7 @@ import companyRoute from './routers/company.route.js'
 import attendenceRoute from "./routers/attendence.route.js"
 import employeeRoute from './routers/employee.route.js'
 import departmentRoute from './routers/department.route.js'
+import designationRoute from './routers/designation.route.js'
 
 export const app = express()
 
@@ -31,3 +32,4 @@ app.use('/api/company',companyRoute)
 app.use('/api/attendence',attendenceRoute)
 app.use('/api/employee',employeeRoute)
 app.use('/api/department', departmentRoute)
+app.use('/api/designation', designationRoute)
