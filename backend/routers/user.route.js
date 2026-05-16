@@ -8,7 +8,7 @@ const router = express.Router()
 router.route('/register').post(upload.fields([{name:"profileImage",maxCount:1}]),registerUser)
 router.route('/login').post(loginUser)
 router.route('/refreshToken').post(refreshAccessToken)
-router.route('/logout').get(logOutUser)
+router.route('/logout').get(refreshAccessToken,logOutUser)
 
 
 

@@ -54,17 +54,17 @@ const employeeSchema = new Schema({
     salaryStructure:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'SalaryStructure',
-        required:true
+        // required:true
     },
     bankDetails:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'BankDetails',
-        required:true
+        // required:true
     },
     documents:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Documents',
-        required:true
+        // required:true
     },
     overtimeAllowed:{
         type:Boolean,

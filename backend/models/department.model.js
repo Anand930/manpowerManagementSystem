@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { model } from "mongoose";
 
 const departmentSchema = new mongoose.Schema({
     name:{
@@ -9,7 +9,7 @@ const departmentSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Company'
     },
-    head:{
+    HeadOfDepartment:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Employee'
     },
