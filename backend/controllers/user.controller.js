@@ -11,19 +11,22 @@ const generateAcessAndRefreshToken = async (userId) => {
     return { accessToken, refreshToken };
   } catch (error) {
     console.log("Error occured while generating tokens ", error);
-    return null
+    return null;
   }
 };
 
 const registerUser = async (req, res) => {
   try {
     const { fullname, username, email, password, phone, role } = req.body;
-    if ([fullname, username, email, password, phone, role].some((field)=>field?.trim()==="")){
+    if (
+      [fullname, username, email, password, phone, role].some(
+        (field) => field?.trim() === "",
+      )
+    ) {
       return res.status(404).json({ message: "all field are compulsory" });
     }
     // console.log("File ", req.files);
     // console.log("api key",process.env.CLOUDINARY_API_KEY);
-    
 
     const existingUser = await User.findOne({
       $or: [{ username }, { email }],
@@ -38,7 +41,6 @@ const registerUser = async (req, res) => {
 
     const profileImageLocalPath = req.files?.profileImage[0]?.path; //local file path of the uploaded profile Image
     console.log("profile image local path ", profileImageLocalPath);
-    
 
     if (!profileImageLocalPath) {
       return res
@@ -47,9 +49,7 @@ const registerUser = async (req, res) => {
     }
 
     const profileImage = await uploadOnCloudinary(profileImageLocalPath);
-    console.log("profileImage",profileImage);
-    
-    
+    console.log("profileImage", profileImage);
 
     if (!profileImage) {
       return res.status(400).json({ message: "profile Image is not found" });
@@ -62,23 +62,20 @@ const registerUser = async (req, res) => {
       password,
       phone,
       role,
-      profileImage: profileImage?.url
-    });    
+      profileImage: profileImage?.url,
+    });
 
     const createdUser = await User.findById(user._id).select(
       "-password -refreshToken",
-    );    
+    );
 
     return res
       .status(201)
       .json({ message: "user is created successfully ", createdUser });
-
   } catch (error) {
     console.log("Something went wrong while creating user ", error);
 
-    return res
-      .status(500)
-      .json({ message: error.meassag });
+    return res.status(500).json({ message: error.meassag });
   }
 };
 
@@ -87,14 +84,11 @@ const loginUser = async (req, res) => {
     console.log("req.body", req.body);
     const { usernameOrEmail, password } = req.body;
 
-    
-    
     const user = await User.findOne({
       $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
     });
 
-    console.log("user ",user);
-    
+    console.log("user ", user);
 
     if (!user) {
       return res
@@ -108,18 +102,16 @@ const loginUser = async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateAcessAndRefreshToken(
-      user._id
+      user._id,
     );
-    if(!accessToken ||!refreshToken){
-      return res.status(500).json({message:"issue in generating tokens"})
+    if (!accessToken || !refreshToken) {
+      return res.status(500).json({ message: "issue in generating tokens" });
     }
-
 
     const loggedInUser = await User.findById(user._id).select(
       "-password -refreshToken",
     );
     console.log("loggedIn user ", loggedInUser);
-    
 
     const options = {
       httpOnly: true,
@@ -133,47 +125,78 @@ const loginUser = async (req, res) => {
       .json({
         message: "user loggedin successfully ",
         user: loggedInUser,
-        accessToken
+        accessToken,
       });
   } catch (error) {
     console.log("Something went wrong while loggedIn the user");
-    return res.status(500).json({message:error.message})
+    return res.status(500).json({ message: error.message });
   }
 };
 
-const refreshAccessToken = async(req, res) =>{
-  const incominToken = req.cookies.refreshToken||req.body.refreshAccessToken
-  if(!incominToken){
-    return res.status(401).json({message:"token not found"})
+const refreshAccessToken = async (req, res) => {
+  const incominToken = req.cookies.refreshToken || req.body.refreshAccessToken;
+  if (!incominToken) {
+    return res.status(401).json({ message: "token not found" });
   }
 
   try {
-    const decode = jwt.verify(incominToken,process.env.REFRESH_TOKEN_SECRET)
+    const decode = jwt.verify(incominToken, process.env.REFRESH_TOKEN_SECRET);
 
-    const user = await User.findById(decode._id)
-    if(!user){
-      return res.status(401).json({meassage:"wrong token"})
+    const user = await User.findById(decode._id);
+    if (!user) {
+      return res.status(401).json({ meassage: "wrong token" });
     }
-    if(incominToken!==user.refreshToken){
-      return res.status(401).json({message:"refreshToken is expired or wrong"})
+    if (incominToken !== user.refreshToken) {
+      return res
+        .status(401)
+        .json({ message: "refreshToken is expired or wrong" });
     }
-    const options ={
-      httpOnly:true,
-      secure:true
-    }
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
 
-    const {accessToken, refreshToken} = await generateAcessAndRefreshToken(user._id)
-    return res.status(201)
-    .cookie('accessToken',accessToken)
-    .cookie('refreshToken',refreshToken)
-    .json({
-      message:"accessToken refresh", accessToken, refreshToken
-    })
+    const { accessToken, refreshToken } = await generateAcessAndRefreshToken(
+      user._id,
+    );
+    return res
+      .status(201)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({
+        message: "accessToken refresh",
+        accessToken,
+        refreshToken,
+      });
   } catch (error) {
     console.log(error.message);
-    
+    return res.status(500).json({ message: error.meassage });
   }
-}
+};
 
+const logOutUser = async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
+    {
+      new: true,
+    },
+  );
 
-export {registerUser, loginUser}
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json({message:"User LoggedOut Successfully"})
+};
+
+export { registerUser, loginUser, refreshAccessToken, logOutUser };

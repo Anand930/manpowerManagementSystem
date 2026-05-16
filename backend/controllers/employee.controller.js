@@ -1,4 +1,3 @@
-import { Activity } from "react";
 import { Employee } from "../models/employee.model.js";
 
 const addEmployee = async (req, res) => {
@@ -158,7 +157,7 @@ const deleteEmployee = async(req,res)=>{
   try {
     const {employeeId} = req.params
     
-    const employee = await Employee.findByIdAndUpdate(employeeId,{isActive=false},{new:true})
+    const employee = await Employee.findByIdAndUpdate(employeeId,{isActive:false},{new:true})
     if(!employee){
       return res.status(404).json({message:"employee not found"})
     }
@@ -188,3 +187,5 @@ const searchEmployee = async(req,res) =>{
     return res.status(500).json({message:"something went wrong while searching employee", error:error.message})
   }
 }
+
+export {addEmployee, getEmployees, getSingleEmployee, searchEmployee, updateEmployee, deleteEmployee}
