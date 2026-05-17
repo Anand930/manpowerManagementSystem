@@ -2,23 +2,35 @@ import mongoose, { model, Schema } from "mongoose";
 
 const salaryStructureSchema = new Schema(
   {
+    name:{
+      type:String,
+      required:true,
+      unique:true
+    },
     basicSalary: {
       type: Number,
       required: true,
     },
 
-    overtimeRate: Number,
+    overtimeAllowed: {
+      type: Boolean,
+      default: true,
+    },
+
+    overtimeRate: { 
+      type: Number, 
+      default: 0 
+    },
 
     allowances: {
       hra: {
         type: Number,
-        required: true,
+        default: 0,
       },
-      others:{
-        type:Number,
-        required:true,
-        default:0
-      }
+      others: {
+        type: Number,
+        default: 0,
+      },
     },
 
     epfDeduction: {
@@ -34,16 +46,15 @@ const salaryStructureSchema = new Schema(
       ref: "Company",
       required: true,
     },
-    isActive:{
-        type:Boolean,
-        required:true,
-        default:true
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
-    attendenceBonus:{
-        type:Number,
-        required:true,
-        default:0
-    }
+    attendenceBonus: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );

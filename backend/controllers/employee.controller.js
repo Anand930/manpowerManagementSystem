@@ -40,12 +40,15 @@ const addEmployee = async (req, res) => {
       address,
       joiningDate,
       employementType,
+      department,
+      designation,
+      company,
     });
 
-    if (!createdUser) {
+    if (!createdEmployee) {
       return res.status(500).json({ message: "Employee not created" });
     }
-    await createdEmployee.populate(['company','department'])
+    await createdEmployee.populate(["company", "department", "designation"]);
     return res.status(201).json({
       message: "new Employee is created successfully",
       newEmployee: createdEmployee,
@@ -107,14 +110,13 @@ const getEmployees = async (req, res) => {
 
 const getSingleEmployee = async (req, res) => {
   try {
-    const { employeeId } = req.params;
+    const { id } = req.params;
 
-    const employee = Employee.findById(employeeId).populate([
+    const employee = await Employee.findById(id).populate([
       "company",
       "department",
       "designation",
       "salaryStructure",
-      "documents",
     ]);
 
     if (!employee) {
@@ -122,7 +124,7 @@ const getSingleEmployee = async (req, res) => {
         .status(404)
         .json({ message: "employee not found with given Id" });
     }
-    return res.status(200).json({ message: "employee fetched" });
+    return res.status(200).json({ message: "employee fetched", employee });
   } catch (error) {
     return res
       .status(500)
@@ -132,10 +134,10 @@ const getSingleEmployee = async (req, res) => {
 
 const updateEmployee = async (req, res) => {
   try {
-    const { employeeId } = req.params;
+    const { id } = req.params;
 
     const updatedEmployee = await Employee.findByIdAndUpdate(
-      employeeId,
+      id,
       req.body,
       { new: true, runValidators: true },
     );
@@ -157,11 +159,11 @@ const updateEmployee = async (req, res) => {
 
 const updateEmployeeStatus = async (req, res) => {
   try {
-    const { employeeId } = req.params;
+    const { id } = req.params;
     const { isActive } = req.body;
 
     const employee = await Employee.findByIdAndUpdate(
-      employeeId,
+      id,
       { isActive },
       { new: true },
     );
@@ -181,10 +183,10 @@ const updateEmployeeStatus = async (req, res) => {
 
 const deleteEmployee = async (req, res) => {
   try {
-    const { employeeId } = req.params;
+    const { id } = req.params;
 
     const employee = await Employee.findByIdAndUpdate(
-      employeeId,
+      id,
       { isActive: false },
       { new: true },
     );
@@ -215,12 +217,10 @@ const searchEmployee = async (req, res) => {
     }
     return res.status(200).json({ message: "fetched employees", employees });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "something went wrong while searching employee",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "something went wrong while searching employee",
+      error: error.message,
+    });
   }
 };
 
