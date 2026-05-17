@@ -3,7 +3,7 @@ import { SalarySlip } from "../models/salarySlip.model.js";
 const addSalarySlip = async (req, res) => {
   try {
     const { employee, company, month, year, salary } = req.body;
-    if ([employee, company, month, year].some((field) => field.trim() === "")) {
+    if ([employee, company, month, year].some((field) => typeof(field)==="String"?field.trim() === "":field==="")) {
       return res
         .status(500)
         .json({ message: "some required fields are missing" });
@@ -13,6 +13,7 @@ const addSalarySlip = async (req, res) => {
       return res.status(409).json({
         message:
           "the salary slip already exists with given employee and company",
+        existingSalarySlip,
       });
     }
     const createdSalarySlip = await SalarySlip.create({
@@ -38,7 +39,8 @@ const addSalarySlip = async (req, res) => {
 
 const getAllSalarySlip = async (req, res) => {
   try {
-    const allSalarySlips = await SalarySlip.find().populate([
+    const {company} = req.body
+    const allSalarySlips = await SalarySlip.find({company}).populate([
       "company",
       "salary",
       "employee",
@@ -63,7 +65,7 @@ const getAllSalarySlip = async (req, res) => {
 const getSalarySlipById = async (req, res) => {
   try {
     const { id } = req.params;
-    const salarySlipById = await SalarySlip.findOne({ id });
+    const salarySlipById = await SalarySlip.findById(id).populate(['employee','company','salary'])
     if (!salarySlipById) {
       return res
         .status(404)
@@ -71,12 +73,12 @@ const getSalarySlipById = async (req, res) => {
     }
     return res.status(200).json({
       message: "salary slip found with given id successfully",
-      salarySlipById,
+      salarySlipById
     });
   } catch (error) {
     return res.status(500).json({
       message: "something went wrong while getting the salary slip",
-      error: error.message,
+      error: error.message
     });
   }
 };
@@ -98,12 +100,10 @@ const updateSalarySlip = async (req, res) => {
       salarySlipToUpdate,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "something went wrong while updating salary slip",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "something went wrong while updating salary slip",
+      error: error.message,
+    });
   }
 };
 
@@ -122,13 +122,17 @@ const deleteSalarySlip = async (req, res) => {
       .status(200)
       .json({ message: "Salary Slip is deleted Successfully" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "something went wrong while deleting the salary slip",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "something went wrong while deleting the salary slip",
+      error: error.message,
+    });
   }
 };
 
-export {addSalarySlip, getAllSalarySlip, getSalarySlipById, updateSalarySlip, deleteSalarySlip}
+export {
+  addSalarySlip,
+  getAllSalarySlip,
+  getSalarySlipById,
+  updateSalarySlip,
+  deleteSalarySlip,
+};

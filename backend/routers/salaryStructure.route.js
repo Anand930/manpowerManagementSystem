@@ -5,8 +5,8 @@ import {
   getAllSalaryStructure,
   getSalaryStructureById,
   updateSalaryStructure,
-} from "../controllers/salaryStructure.controller";
-import { verifyJwt } from "../middleware/verifyJwt";
+} from "../controllers/salaryStructure.controller.js";
+import { verifyJwt } from "../middleware/verifyJwt.js";
 
 const router = express.Router();
 
@@ -15,5 +15,7 @@ router.route("/getallsalarystructure").get(verifyJwt, getAllSalaryStructure);
 router
   .route("/getsalarystructurebyid/:id")
   .get(verifyJwt, getSalaryStructureById);
-router.route("/updatesalarystructure").put(verifyJwt, updateSalaryStructure);
-router.route("/deletesalarystructure").delete(verifyJwt, deleteSalaryStructure);
+router.route("/updatesalarystructure/:id").put(verifyJwt, updateSalaryStructure);
+router.route("/deletesalarystructure/:id").delete(verifyJwt, deleteSalaryStructure);
+
+export default router

@@ -13,14 +13,13 @@ const addCompany = async(req,res)=>{
     
         const company = await Company.create({companyName,location,phone,email,state,companyCode,gstNumber})
 
-        if(!company){
-            return res.status(500).json({message:"company not created"})
+        if(company){
+            return res.status(409).json({message:"company already exist"})
         }
 
         return res.status(200).json({message:"New company registered SuccessFully"})
     } catch (error) {
-        console.log("Error occured while creating user ",error.message);
-        return res.status(500).json({message:"something went wrong while creating the company"})
+        return res.status(500).json({message:"something went wrong while creating the company", error:error.message})
     }
 
 }
@@ -30,12 +29,12 @@ const getAllCompanies = async(req,res) =>{
     try {
         const allCompanies = await Company.find({})
         if(!allCompanies){
-            return res.status(500).json({message:"cannot get all companies"})
+            return res.status(400).json({message:"cannot get all companies"})
         }
         return res.status(200).json({message:"all companies fetched", allCompanies})
     } catch (error) {
         console.log("something went wrong while fetching all companies ", error.message)
-        return res.status(500).json({message:"all companies fetch request failed"})
+        return res.status(500).json({message:"all companies fetch request failed", error:error.message})
     }
 }
 
@@ -51,7 +50,7 @@ const getSingleCompany = async(req,res)=>{
         return res.status(200).json({message:"successfully fetched the company ", company})
     } catch (error) {
         console.log("something went wrong while fetching the company by id",error.message);
-        return res.status(500).json({message:"company fetch request failed"})
+        return res.status(500).json({message:"company fetch request failed", error:error.message})
     }
 }
 

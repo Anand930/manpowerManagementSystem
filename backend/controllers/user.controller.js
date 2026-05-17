@@ -75,7 +75,7 @@ const registerUser = async (req, res) => {
   } catch (error) {
     console.log("Something went wrong while creating user ", error);
 
-    return res.status(500).json({ message: error.meassag });
+    return res.status(500).json({ message: error.meassage });
   }
 };
 
@@ -128,8 +128,8 @@ const loginUser = async (req, res) => {
         accessToken,
       });
   } catch (error) {
-    console.log("Something went wrong while loggedIn the user");
-    return res.status(500).json({ message: error.message });
+    
+    return res.status(500).json({ message:"Something went wrong while loggedIn the user", error:error.message });
   }
 };
 

@@ -8,6 +8,7 @@ import employeeRoute from './routers/employee.route.js'
 import departmentRoute from './routers/department.route.js'
 import designationRoute from './routers/designation.route.js'
 import salarySlipRoute from './routers/salarySlip.route.js'
+import salaryStructureRoute from './routers/salaryStructure.route.js'
 
 export const app = express()
 
@@ -35,3 +36,4 @@ app.use('/api/employee',employeeRoute)
 app.use('/api/department', departmentRoute)
 app.use('/api/designation', designationRoute)
 app.use('/api/salaryslip', salarySlipRoute)
+app.use('/api/salarystructure', salaryStructureRoute)

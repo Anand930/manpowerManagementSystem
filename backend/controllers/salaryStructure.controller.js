@@ -15,7 +15,7 @@ const addSalaryStructure = async (req, res) => {
     } = req.body;
     if (
       [name, basicSalary, epfDeduction, esiDeduction, company].some(
-        (field) => field.trim() === "",
+        (field) => typeof(field)==="String"?field.trim() === "":field==="",
       )
     ) {
       return res.status(404).json({ message: "all fields are required" });
@@ -62,6 +62,7 @@ const addSalaryStructure = async (req, res) => {
 
 const getAllSalaryStructure = async (req, res) => {
   try {
+    const {company} = req.body;
     const salaryStructures = await SalaryStructure.find({ company });
     if (!salaryStructures.length) {
       return res
@@ -80,6 +81,7 @@ const getAllSalaryStructure = async (req, res) => {
       .json({
         message:
           "something went wrong while getting the salary structure format",
+          error:error.message
       });
   }
 };
@@ -89,8 +91,8 @@ const updateSalaryStructure = async (req, res) => {
     const { id } = req.params;
     const updatedSalaryStructure = await SalaryStructure.findByIdAndUpdate(
       id,
-      req.body,
-    );
+      req.body
+    ).populate('company');
     if (!updatedSalaryStructure) {
       return res
         .status(404)
@@ -99,8 +101,7 @@ const updateSalaryStructure = async (req, res) => {
     return res
       .status(200)
       .json(
-        { message: "salary structure format is updated successfully" },
-        updatedSalaryStructure,
+        { message: "salary structure format is updated successfully",updatedSalaryStructure }        
       );
   } catch (error) {
     return res

@@ -14,6 +14,6 @@ router.route("/addsalaryslip").post(verifyJwt, addSalarySlip);
 router.route("/getallsalaryslip").get(verifyJwt, getAllSalarySlip);
 router.route("/getsalaryslip/:id").get(verifyJwt, getSalarySlipById);
 router.route("/updatesalaryslip/:id").put(verifyJwt, updateSalarySlip);
-router.route("/deletesalaryslip").delete(verifyJwt, deleteSalarySlip);
+router.route("/deletesalaryslip/:id").delete(verifyJwt, deleteSalarySlip);
 
 export default router;

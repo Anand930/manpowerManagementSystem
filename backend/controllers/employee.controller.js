@@ -46,7 +46,7 @@ const addEmployee = async (req, res) => {
     });
 
     if (!createdEmployee) {
-      return res.status(500).json({ message: "Employee not created" });
+      return res.status(400).json({ message: "Employee not created" });
     }
     await createdEmployee.populate(["company", "department", "designation"]);
     return res.status(201).json({
@@ -136,17 +136,14 @@ const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true, runValidators: true },
-    );
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, req.body);
 
-    if (!updateEmployee) {
+    if (!updatedEmployee) {
       return res.status(404).json({
         message: "employee not found",
       });
     }
+    await updatedEmployee.populate(["company", "department", "designation"]);
     res
       .status(200)
       .json({ message: "employee updated successfully", updatedEmployee });
@@ -162,11 +159,7 @@ const updateEmployeeStatus = async (req, res) => {
     const { id } = req.params;
     const { isActive } = req.body;
 
-    const employee = await Employee.findByIdAndUpdate(
-      id,
-      { isActive },
-      { new: true },
-    );
+    const employee = await Employee.findByIdAndUpdate(id, { isActive });
 
     if (!employee) {
       return res.status(404).json({ message: "employee not found" });
@@ -185,11 +178,7 @@ const deleteEmployee = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const employee = await Employee.findByIdAndUpdate(
-      id,
-      { isActive: false },
-      { new: true },
-    );
+    const employee = await Employee.findByIdAndUpdate(id, { isActive: false });
     if (!employee) {
       return res.status(404).json({ message: "employee not found" });
     }
