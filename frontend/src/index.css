@@ -133,6 +133,11 @@
   @apply bg-gradient-to-r from-indigo-500 to-teal-500 text-white px-3 py-4 rounded-lg font-semibold;
 }
 
+.custom-btn2{
+  @apply bg-gradient-to-r from-[#E3FCFF] to-[#F7E3EE];
+}
+
 @theme{
-  --color-logo-black:"#111114"
+  --color-logo-black: #111114;
+  --color-logo-blue: #7377c6;
 }

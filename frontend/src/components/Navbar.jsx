@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 const Navbar = () => {
   const [menuActive, setMenuActive] = useState(false)
   return (
-    <div className='shadow-sm bg-transparent '>
+    <div className=' fixed top-0 left-0 w-full bg-white shadow-md z-50'>
       <div className='lg:max-w-7xl md:max-w-4xl mx-auto sm:flex hidden items-center justify-between h-8 py-8 '>
         <div className="logo flex items-center justify-start gap-2">
           <div className="logo-icon bg-[#7377c6] p-2 rounded-lg">
