@@ -1,28 +1,49 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Users, SunIcon, MoonIcon, MenuIcon, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useTheme } from 'next-themes'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   const [menuActive, setMenuActive] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const {theme,setTheme} = useTheme()
+  useEffect(() => {
+    const handleScroll = (e) => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
+  const handleThemeClick = () =>{
+    setTheme(theme==="light"?"dark":"light")
+  }
   return (
-    <div className=' fixed top-0 left-0 w-full bg-white shadow-md z-50'>
+    <div className={`${isScrolled ? "fixed top-0 left-0 z-50  bg-white dark:bg-black shadow-sm w-full transition-all duration-300" : "w-full relative"}  `}>
       <div className='lg:max-w-7xl md:max-w-4xl mx-auto sm:flex hidden items-center justify-between h-8 py-8 '>
         <div className="logo flex items-center justify-start gap-2">
-          <div className="logo-icon bg-[#7377c6] p-2 rounded-lg">
+          <div className="logo-icon bg-logo-blue p-2 rounded-lg">
             <Users color='white' />
           </div>
-          <p className="logo-name font-bold text-xl text-logo-black cursor-pointer">PeoplePilot</p>
+          <p className="logo-name font-bold text-xl text-logo-black cursor-pointer dark:text-white">PeoplePilot</p>
         </div>
         <div className="navlink ">
           <ul className='flex items-center justify-center gap-8'>
-            <li className='text-md text-gray-500 hover:text-black cursor-pointer'>Features</li>
-            <li className='text-md text-gray-500 hover:text-black cursor-pointer'>Benefits</li>
-            <li className='text-md text-gray-500 hover:text-black cursor-pointer'>Contacts</li>
+            <Link to={"#features"}><li className='text-md text-gray-500 hover:text-black cursor-pointer dark:hover:text-white'>Features</li></Link>
+            <Link to={"#benefits"}><li className='text-md text-gray-500 hover:text-black cursor-pointer dark:hover:text-white'>Benefits</li></Link>
+            <Link to={"#contact"}><li className='text-md text-gray-500 hover:text-black cursor-pointer dark:hover:text-white'>Contacts</li></Link>
           </ul>
         </div>
         <div className="signinandgetstarted flex items-center justify-center gap-4">
           <div className="dark-mode cursor-pointer">
-            <Button variant={"outline"}><SunIcon /></Button>
+            <Button onClick={handleThemeClick} variant={"outline"}><SunIcon /></Button>
           </div>
           <div className="signIn cursor-pointer">
             <Button variant='outline'>SignIn</Button>
@@ -38,13 +59,13 @@ const Navbar = () => {
         <div className=''>
           <div className='flex items-center justify-between'>
             <div className="logo flex items-center justify-start gap-2">
-              <div className="logo-icon bg-[#7377c6] p-2 rounded-lg">
+              <div className="logo-icon bg-logo-blue p-2 rounded-lg">
                 <Users color='white' />
               </div>
               <p className="logo-name font-bold text-xl text-logo-black cursor-pointer">PeoplePilot</p>
             </div>
             <div className='menu'>
-              {menuActive ? <X  onClick={() => setMenuActive(false)} /> : <Menu onClick={() => setMenuActive(true)} />}
+              {menuActive ? <X onClick={() => setMenuActive(false)} /> : <Menu onClick={() => setMenuActive(true)} />}
             </div>
           </div>
 
@@ -59,7 +80,7 @@ const Navbar = () => {
             <div className='flex flex-col gap-3'>
 
               <div className="dark-mode cursor-pointer w-full">
-                <Button variant={"outline"} className={'w-full h-10'}><SunIcon size={46} /></Button>
+                <Button variant={"outline"} className={'w-full h-10'}>{theme==="dark"?<SunIcon size={46} />:<MoonIcon size={46}/>}</Button>
               </div>
               <div className="signIn cursor-pointer">
                 <Button variant='outline' className={"w-full h-10"}>SignIn</Button>
