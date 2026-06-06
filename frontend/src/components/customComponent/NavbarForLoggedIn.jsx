@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Users, SunIcon, MoonIcon, MenuIcon, Menu, X, User } from 'lucide-react'
+import { Users, SunIcon, MoonIcon, MenuIcon, Menu, X, User, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from 'next-themes'
 import { Link } from 'react-router-dom'
-import { Avatar } from 'radix-ui'
+import { Input } from '../ui/input'
 
-const Navbar = () => {
+const NavbarForLoggedIn = () => {
   const [menuActive, setMenuActive] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { theme, setTheme } = useTheme()
@@ -28,29 +28,29 @@ const Navbar = () => {
   }
   return (
     <div className={`${isScrolled ? "fixed top-0 left-0 z-50  bg-white dark:bg-black shadow-sm w-full transition-all duration-300" : "w-full relative"}  `}>
-      <div className='lg:max-w-7xl md:max-w-4xl mx-auto sm:flex hidden items-center justify-between h-8 py-8 '>
+      <div className='lg:max-w-7xl md:max-w-4xl mx-auto sm:flex hidden items-center justify-between h-8 py-8  border-b'>
         <div className="logo flex items-center justify-start gap-2">
           <div className="logo-icon bg-logo-blue p-2 rounded-lg">
             <Users color='white' />
           </div>
           <p className="logo-name font-bold text-xl text-logo-black cursor-pointer dark:text-white">PeoplePilot</p>
         </div>
-        <div className="navlink ">
-          <ul className='flex items-center justify-center gap-8'>
-            <Link to={"#features"}><li className='text-md text-gray-500 hover:text-black cursor-pointer dark:hover:text-white'>Features</li></Link>
-            <Link to={"#benefits"}><li className='text-md text-gray-500 hover:text-black cursor-pointer dark:hover:text-white'>Benefits</li></Link>
-            <Link to={"#contact"}><li className='text-md text-gray-500 hover:text-black cursor-pointer dark:hover:text-white'>Contacts</li></Link>
-          </ul>
-        </div>
-
+        
         <div className="signinandgetstarted flex items-center justify-center gap-4">
+          <div className="signIn cursor-pointer">
+            <div className=' flex items-center justify-center outline-1 rounded-sm  border-gray-50'>
+              <SearchIcon size={27 } className=' p-1 text-gray-400 '/>
+              <Input className={'rounded-sm outline-none border-none focus-visible:ring-0 focus-visible:ring-offset-0'}/>
+            </div>
+          </div>
           <div className="dark-mode cursor-pointer">
             <Button onClick={handleThemeClick} variant={"outline"}><SunIcon /></Button>
           </div>
-          <div className="signIn cursor-pointer">
-            <Link to={'/signin'}><Button variant='outline'>SignIn</Button></Link>
+          <div className="getStarted">
+            <Button variant='outline' className={'custom-btn cursor-pointer'}>
+              <User/>
+            </Button>
           </div>
-          <div className="getStarted"> <Button variant='outline' className={'custom-btn cursor-pointer'}>Get Started</Button> </div>
         </div>
       </div>
 
@@ -96,4 +96,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default NavbarForLoggedIn
